@@ -22,20 +22,12 @@ router.post('/createuser', [
         return res.status(400).json({ errors: errors.array() });
     }
 
-    // Generating a Json Web Token of the required User ID
-    const data = {
-        user: {
-            id: user.id
-        }
-    }
-    var token = jwt.sign(data, 'shhhhh');
-
     // Creating a User and Adding its Data in the Database
     await User.create({
         name: req.body.name,
         password: secPass,
         email: req.body.email
-    }).then(user => res.json(token)).catch((err) => {
+    }).then(user => res.json(user)).catch((err) => {
         res.status(400).json({ Error: err.message })
     });
 })
