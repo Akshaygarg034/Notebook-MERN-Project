@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/User')
+const User = require('../models/User');
 const { body, validationResult } = require('express-validator');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -81,6 +81,7 @@ router.post('/login', [
 router.post('/getuser', fetchuser, async (req, res) => {
     try {
         userID = req.user.id;
+        // Finding user from the database and sending all its informations except password
         const user = await User.findById(userID).select('-password');
         res.send(user);
     } catch (error) {
