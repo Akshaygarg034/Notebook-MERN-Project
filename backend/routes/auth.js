@@ -11,32 +11,40 @@ router.post('/createuser', [
     body('name', 'name must be minimum of 3 characters').isLength({ min: 3 }),
     body('password', 'password must be minimum of 5 characters').isLength({ min: 5 })
 ], async (req, res) => {
+    let success = false;
+    // This will throw an error if the name, email or password are not valid
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ success, errors: errors.array() });
+    }
+    // Checks whether the user with this email exists already
+    let findUser = await User.findOne({ email: req.body.email });
+    if (findUser) {
+        return res.status(400).json({ success, error: "Sorry a user with this email already exists" })
+    }
 
     // Hashing the password along with salt
     const salt = await bcrypt.genSalt(10);
     const secPass = await bcrypt.hash(req.body.password, salt);
 
-    // This will throw an error if the name, email or password are not valid
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
 
     // Creating a User and Adding its Data in the Database
+    success = true;
     await User.create({
         name: req.body.name,
         password: secPass,
         email: req.body.email
-    }).then(user => res.json(user)).catch((err) => {
-        res.status(400).json({ Error: err.message })
-    });
+    }).then(user => res.json({ success, user }))
+        .catch((err) => {
+            res.status(400).json({ Error: err.message })
+        });
 })
 
 router.post('/login', [
     body('email', 'Enter a valid email').isEmail(),
     body('password', 'password cannot be blank').exists()
 ], async (req, res) => {
-
+    var success = false;
     // This will throw an error if the name, email or password are not valid
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -46,13 +54,15 @@ router.post('/login', [
     try {
         let user = await User.findOne({ email });
         if (!user) {
-            return res.status(400).json({ error: 'Invalid Credentials' })
+            success = false;
+            return res.status(400).json({ success, error: 'Invalid Credentials' })
         }
 
         // Comparing the password entered by the User with the Hashed password of the Database
         const comparePassword = await bcrypt.compare(password, user.password);
         if (!comparePassword) {
-            return res.status(400).json({ error: 'Invalid Credentials' })
+            success = false;
+            return res.status(400).json({ success, error: 'Invalid Credentials' })
         }
 
         // Generating a Json Web Token of the required User ID
@@ -62,7 +72,8 @@ router.post('/login', [
             }
         }
         const authtoken = jwt.sign(data, 'shhhhh');
-        res.json(authtoken);
+        success = true;
+        res.json({ success, authtoken });
 
     } catch (error) {
         console.error(error.message);

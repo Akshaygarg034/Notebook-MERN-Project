@@ -17,8 +17,8 @@ router.get('/fetchallnotes', fetchuser, async (req, res) => {
 })
 
 router.post('/addnote', fetchuser, [
-    body('title', 'title must be minimum of 5 characters').isLength({ min: 3 }),
-    body('description', 'description must be minimum of 3 characters').isLength({ min: 5 })
+    body('title', 'title must be minimum of 3 characters').isLength({ min: 3 }),
+    body('description', 'description must be minimum of 5 characters').isLength({ min: 5 })
 ], async (req, res) => {
 
     try {
