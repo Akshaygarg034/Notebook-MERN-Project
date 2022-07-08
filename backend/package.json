@@ -1,5 +1,5 @@
 {
-  "name": "my-notebook",
+  "name": "notebook",
   "version": "1.0.0",
   "description": "A cloud notebook for everyone",
   "main": "index.js",
