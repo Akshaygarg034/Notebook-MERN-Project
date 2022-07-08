@@ -27,14 +27,21 @@
 .App-link {
   color: #61dafb;
 }
-i{
+
+i {
   cursor: pointer;
+}
+
+.about {
+  font-weight: 500;
+  transform: scale(1.8);
 }
 
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
