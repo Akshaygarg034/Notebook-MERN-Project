@@ -24,7 +24,7 @@ function App() {
     }, 1500);
   }
   return (
-    <>
+    <> 
       <NoteState>
         <Router>
           <Navbar />
